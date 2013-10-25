@@ -48,7 +48,7 @@ boost::shared_ptr<uint8_t> getTestData(int* length)
 int main(int argc, char** argv)
 {
     EventLoop loop;
-    InetAddress proxyAddr(6001);
+    InetAddress proxyAddr("127.0.0.1", 6001);
     dbdky::cma_client::cma_client client(&loop, proxyAddr, "cma_client");
     client.setGetSendDataCallback(
         boost::bind(getTestData, _1));

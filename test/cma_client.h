@@ -84,7 +84,13 @@ namespace cma_client
         void disconnect();
         void write(const StringPiece& message);
         void write(int length, uint8_t* buffer);
-
+        
+        void onConnection(const TcpConnectionPtr& conn);
+        void onMessage(const TcpConnectionPtr& conn,
+                 Buffer* buf,
+                 Timestamp receiveTime);
+        void onWriteComplete(const TcpConnectionPtr& conn);
+ 
         mutable MutexLock mutexConn_;
     };
 }

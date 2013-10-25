@@ -22,8 +22,16 @@ namespace cma_client
           interval_(interval),
           threadPool_(new EventLoopThreadPool(loop))
     {
+        client_.setConnectionCallback(
+            boost::bind(&cma_client::onConnection, this, _1));
+        client_.setMessageCallback(
+            boost::bind(&cma_client::onMessage, this, _1, _2, _3));
+        client_.setWriteCompleteCallback(
+            boost::bind(&cma_client::onWriteComplete, this, _1));
+
         threadPool_->setThreadNum(6);
         threadPool_->start();
+
     }
 
     cma_client::~cma_client()
@@ -59,20 +67,14 @@ namespace cma_client
 
     void cma_client::sendTask()
     {
-        LOG_INFO << name_ << ":" << "send";
         int sendLength;
-
         if (!getSendDataCallback_)
         {
+            LOG_INFO << "NULL getSendDataCallback_";
             return;
         }
 
         boost::shared_ptr<uint8_t> buf = getSendDataCallback_(&sendLength);
-        LOG_INFO << "***";
-        for (int tmp = 0; tmp < sendLength; tmp++)
-        {
-            LOG_INFO << get_pointer(buf)[tmp] << "--";
-        }
         write(sendLength, get_pointer(buf));
         disconnect();
     }
@@ -88,10 +90,50 @@ namespace cma_client
         }
     }
 
+    void cma_client::onConnection(const TcpConnectionPtr& conn)
+    {
+        LOG_INFO << conn->localAddress().toIpPort() << " -> "
+            << conn->peerAddress().toIpPort() << " is "
+            << (conn->connected() ? "UP" : "DOWN");
+
+        MutexLockGuard lock(mutexConn_);
+        if (conn->connected())
+        {
+            connection_ = conn;
+        }
+        else
+        {
+            connection_.reset();
+        }
+    }
+
+    void cma_client::onMessage(const TcpConnectionPtr& conn,
+                      Buffer* buf,
+                      Timestamp receiveTime)
+    {
+        LOG_INFO << "onMessage";
+        string response = buf->retrieveAllAsString();
+        LOG_INFO << response;
+    }
+
+    void cma_client::onWriteComplete(const TcpConnectionPtr& conn)
+    {
+    }
+
     void cma_client::write(int length, uint8_t* buff)
     {
-        MutexLockGuard lock(mutexConn_);
+        if ((length <= 0) || (NULL == buff))
+        {
+            return;
+        }
 
+        MutexLockGuard lock(mutexConn_);
+        if (connection_)
+        {
+            dbdky::port::Buffer buf;
+            buf.append(buff, length);
+            connection_->send(&buf);
+        }
     }
 }
 }
