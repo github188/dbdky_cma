@@ -11,7 +11,7 @@
 using namespace dbdky;
 using namespace dbdky::port;
 
-static const string confFileName = "cac_client.conf";
+static const string confFileName = "cma_conf.conf";
 
 boost::shared_ptr<ConfUtil> ConfUtil::instance_;
 boost::shared_ptr<ConfUtil> ConfUtil::getInstance()
