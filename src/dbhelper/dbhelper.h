@@ -16,7 +16,7 @@ using namespace sql;
 using std::string;
 namespace dbdky
 {
-namespace cac_client
+namespace cma_server 
 {
 class DBHelper : boost::noncopyable
 {

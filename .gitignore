@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+# gsoap things
+src/ws/test/*.h
+src/ws/test/*.nsmap
+src/ws/test/*.cpp
+src/ws/test/*.xml

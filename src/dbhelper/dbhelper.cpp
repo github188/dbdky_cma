@@ -4,7 +4,7 @@
 
 namespace dbdky
 {
-namespace cac_client
+namespace cma_server 
 {
 DBHelper::DBHelper(const string& dbpath,
                    const string& dbuser,
