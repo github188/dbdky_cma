@@ -46,7 +46,6 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
     dbdky::string msg(buf->retrieveAllAsString());
     LOG_INFO << conn->name() << "receive at [" << time.toString()
 		<< "]" << msg.size() << "'bytes: " << msg;
-
     //TODO:
 }
 
