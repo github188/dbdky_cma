@@ -48,9 +48,9 @@ public:
         return dbName_;
     }
 
-    string getCacId() const
+    string getCmaId() const
     {
-        return cacid_;
+        return cmaid_;
     }
 
     string getLocalIP() const
@@ -88,7 +88,7 @@ private:
     string dbUser_;
     string dbPasswd_;
     string dbName_;
-    string cacid_;
+    string cmaid_;
     string localIP_;
     string proxyIP_;
     uint16_t proxyPort_;

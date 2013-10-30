@@ -18,8 +18,12 @@
 
 #include <dbhelper/dbhelper.h>
 
+#include <string>
+
 using namespace dbdky;
 using namespace dbdky::port;
+
+using std::string;
 
 namespace dbdky
 {
@@ -65,6 +69,8 @@ private:
 
     void uploadMoniDataTask();
     void uploadHeartbeatTask();
+
+    string getCdType(string);
 }; 
 }
 }

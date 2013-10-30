@@ -8,7 +8,7 @@
 #define DEFAULT_DBUSER			"root"
 #define DEFAULT_DBPASSWD 		"kevinLike$"
 #define DEFAULT_DBNAME 			"omsdb"
-#define DEFAULT_CACID 			"22M00000022376016"
+#define DEFAULT_CMAID 			"22M00000022376016"
 #define DEFAULT_LOCALIP 		"127.0.0.1"
 #define DEFAULT_PROXYIP 		"127.0.0.1"
 #define DEFAULT_PORT 			6000
