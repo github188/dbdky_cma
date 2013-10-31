@@ -13,6 +13,7 @@
 #include "tinyxml.h"
 
 #include "crc.h"
+#include "cma_frame.h"
 
 namespace dbdky
 {
@@ -106,6 +107,147 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
     delete [] buffer; 
     return ret;
 }
+
+
+boost::shared_ptr<dbdky::cma_server::cma_frame> validBuf2Frame(boost::shared_ptr<uint8_t>& buf)
+{
+    char deviceId[17];
+    const uint8_t* buffer = get_pointer(buf);
+
+    int16_t length = makeword(buffer[2], buffer[3]);
+
+    dbdky::cma_server::cma_frame::CMA_FRM_TYPE ftype;
+    dbdky::cma_server::cma_frame::CMA_PROTOCOL_TYPE ptype;
+
+    for (int tmp = 0; tmp < 17; tmp++)
+    {
+        deviceId[tmp] = buffer[4 + tmp];
+    }
+
+    switch (buffer[21])
+    {
+        case 0x01:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_MONIDATA;    
+            break;
+        }
+        case 0x02:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_DATARESP; 
+            break;
+        }
+        case 0x03:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_CTRL;    
+            break;
+        }
+        case 0x04:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_CTRLRESP; 
+            break;
+        }
+        case 0x05:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_REMOTEIMAGEDATA;    
+            break;
+        }
+        case 0x06:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_REMOTEIMAGECTRL; 
+            break;
+        }
+        case 0x07:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUS;    
+            break;
+        }
+        case 0x08:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUSRESP;
+            break;
+        } 
+        case 0x09:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_SYNC; 
+            break;
+        }
+        default:
+        {
+            ftype = dbdky::cma_server::cma_frame::CMA_FRM_UNKNOWN;
+        }
+    } 
+
+    switch (buffer[22])
+    {
+        case 0x01:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_QX;
+            break;
+        }
+        case 0x0c:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_GT;
+            break;
+        }
+        case 0x1e:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_ZDTZ;
+            break;
+        }
+        case 0x1f:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_ZDBX;
+            break;
+        }
+        case 0x20:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_DXHC;
+            break;
+        }
+        case 0x21:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_WD;
+            break;
+        }
+        case 0x22:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_FB;
+            break;
+        }
+        case 0x23:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_FP;
+            break;
+        }
+        case 0x24:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_WDTZ;
+            break;
+        }
+        case 0x25:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_WDGJ;
+            break;
+        }
+        case 0x5c:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_WH;
+            break;
+        }
+        default:
+        {
+            ptype = dbdky::cma_server::cma_frame::CMA_PTYPE_UNKNOWN;
+        }
+    }
+
+    boost::shared_ptr<uint8_t> pdudata(new uint8_t[length]);
+    memcpy(get_pointer(pdudata), &buffer[23], length);
+
+    boost::shared_ptr<dbdky::cma_server::cma_frame> ret(new dbdky::cma_server::cma_frame(ftype, ptype,
+	deviceId, get_pointer(pdudata), length));
+
+    return ret;
+}
 }
 }
 
@@ -157,6 +299,9 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
         {
             boost::shared_ptr<uint8_t> framebuffer(new uint8_t[parselength]);
             memcpy(get_pointer(framebuffer), buf->peek(), parselength); 
+            boost::shared_ptr<cma_frame> frame = detail::validBuf2Frame(framebuffer);
+            //frame->dumpInfo();
+            buf->retrieve(parselength);
             LOG_INFO << "CMA_FRM_OK";
             break;
         }

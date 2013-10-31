@@ -14,6 +14,7 @@ install(TARGETS confutil DESTINATION lib)
 
 set(cma_server_SRCS
   cma_server.cpp
+  cma_frame.cpp
   main.cpp
 )
 
