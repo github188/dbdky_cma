@@ -4,12 +4,18 @@
 #include <stdint.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
+
 #include <string.h>
 #include <string>
+#include <map>
 
 #include <utils/Logging.h>
 
+#include "cma_callbacks.h"
+
 using std::string;
+using std::map;
 
 namespace dbdky
 {
@@ -18,7 +24,6 @@ namespace cma_server
 class cma_frame
 {
 public:
-
     enum CMA_FRM_TYPE
     {
         //According to Q/GDW 242-2010 C.8.1
@@ -52,24 +57,26 @@ public:
 
     cma_frame(CMA_FRM_TYPE ftype, CMA_PROTOCOL_TYPE ptype, char deviceId[17], const uint8_t* pdudata, ssize_t pduLength);
 
+    cma_frame(const cma_frame& frm);
+    ~cma_frame();
+    cma_frame& operator=(const cma_frame&);
+
     ssize_t getPduLength() const
     {
         return pduLength_;
     }
 
-    boost::shared_ptr<uint8_t> getPduData() const
+    void dumpInfo() const
     {
-        boost::shared_ptr<uint8_t> ret(new uint8_t[pduLength_]);
-        memcpy(get_pointer(ret), get_pointer(pduData_), pduLength_);
-
-        return ret ;
+        // What the fuck.
+        // This function took me almost 1.5 days to figure out an odd core dump.
+        // I am leaving this function blanck instead of eliminate this to prove that I have conquer this.
+        // Chen Hongquan.
     }
 
-    string dumpInfo() const
+    void setParseFunc(const CmaFrameParserFunc& func)
     {
-       LOG_INFO << "****CMA_FRAME****";
-       LOG_INFO << ftype_;
-       LOG_INFO << ptype_;
+        parserFunc_ = func;
     }
 
 private:
@@ -77,8 +84,11 @@ private:
     ssize_t pduLength_;
     CMA_FRM_TYPE ftype_;
     CMA_PROTOCOL_TYPE ptype_;
-    boost::scoped_ptr<uint8_t> pduData_;
+    uint8_t* pduData_;
+    CmaFrameParserFunc parserFunc_;
 };
+
+
 }
 }
 

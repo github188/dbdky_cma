@@ -109,10 +109,9 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
 }
 
 
-boost::shared_ptr<dbdky::cma_server::cma_frame> validBuf2Frame(boost::shared_ptr<uint8_t>& buf)
+dbdky::cma_server::cma_frame validBuf2Frame(uint8_t* buffer)
 {
     char deviceId[17];
-    const uint8_t* buffer = get_pointer(buf);
 
     int16_t length = makeword(buffer[2], buffer[3]);
 
@@ -240,11 +239,11 @@ boost::shared_ptr<dbdky::cma_server::cma_frame> validBuf2Frame(boost::shared_ptr
         }
     }
 
-    boost::shared_ptr<uint8_t> pdudata(new uint8_t[length]);
-    memcpy(get_pointer(pdudata), &buffer[23], length);
+    uint8_t *pdudata = new uint8_t[length];
+    memcpy(pdudata, &buffer[23], length);
+    dbdky::cma_server::cma_frame ret(ftype, ptype, deviceId, pdudata, length);
 
-    boost::shared_ptr<dbdky::cma_server::cma_frame> ret(new dbdky::cma_server::cma_frame(ftype, ptype,
-	deviceId, get_pointer(pdudata), length));
+    delete [] pdudata;
 
     return ret;
 }
@@ -288,7 +287,6 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
 //    dbdky::string msg(buf->retrieveAllAsString());
 //    LOG_INFO << conn->name() << "receive at [" << time.toString()
 //		<< "]" << msg.size() << "'bytes: " << msg;
-    //TODO:
     int parselength;
     detail::FrameParseErr res;
     res = detail::checkCMAFrame(buf, &parselength);
@@ -297,10 +295,11 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
     {
         case detail::CMA_FRM_OK:
         {
-            boost::shared_ptr<uint8_t> framebuffer(new uint8_t[parselength]);
-            memcpy(get_pointer(framebuffer), buf->peek(), parselength); 
-            boost::shared_ptr<cma_frame> frame = detail::validBuf2Frame(framebuffer);
-            //frame->dumpInfo();
+            uint8_t* framebuffer = new uint8_t[parselength];
+            memcpy(framebuffer, buf->peek(), parselength);
+            cma_frame frame = detail::validBuf2Frame(framebuffer);
+            delete [] framebuffer;
+            //frame.dumpInfo();
             buf->retrieve(parselength);
             LOG_INFO << "CMA_FRM_OK";
             break;
