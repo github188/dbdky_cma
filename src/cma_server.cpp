@@ -13,6 +13,7 @@
 #include "tinyxml.h"
 
 #include "crc.h"
+#include "util.h"
 #include "cma_frame.h"
 #include "cma_ptlrender.h"
 
@@ -37,17 +38,6 @@ uint16_t crc16(uint8_t *puchMsg, uint16_t usDataLen)
 }
 
 const uint16_t CMA_PACKET_HEADER = 0x5aa5;
-
-uint16_t makeword(uint8_t low, uint8_t high)
-{
-    uint16_t ret = 0;
-    ret |= high;
-    ret <<= 8;
-    ret |= low;
-
-    return ret;
-     
-}
 
 enum FrameParseErr
 {
@@ -74,7 +64,7 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
     uint8_t* buffer = new uint8_t[length];
     memcpy(buffer, sourceData, length);
 
-    uint16_t tmpHeader = makeword(buffer[0], buffer[1]);
+    uint16_t tmpHeader = dbdky::makeword(buffer[0], buffer[1]);
     if (tmpHeader != CMA_PACKET_HEADER)
     {
         ret = CMA_FRM_BAD_FRAME;
@@ -83,7 +73,7 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
         return ret; 
     }
    
-    uint16_t tmpLength = makeword(buffer[2], buffer[3]);
+    uint16_t tmpLength = dbdky::makeword(buffer[2], buffer[3]);
     if (tmpLength + 25 > length)
     {
         ret = CMA_FRM_BAD_FRAME;
@@ -92,7 +82,7 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
         return ret;
     } 
 
-    uint16_t tmpCRC = makeword(buffer[23 + tmpLength], buffer[24 + tmpLength]);
+    uint16_t tmpCRC = dbdky::makeword(buffer[23 + tmpLength], buffer[24 + tmpLength]);
 
     if (tmpCRC != crc16(buffer, 23 + tmpLength))
     {
@@ -114,7 +104,7 @@ dbdky::cma_server::cma_frame validBuf2Frame(uint8_t* buffer)
 {
     char deviceId[17];
 
-    int16_t length = makeword(buffer[2], buffer[3]);
+    int16_t length = dbdky::makeword(buffer[2], buffer[3]);
 
     dbdky::cma_server::cma_frame::CMA_FRM_TYPE ftype;
     dbdky::cma_server::cma_frame::CMA_PROTOCOL_TYPE ptype;

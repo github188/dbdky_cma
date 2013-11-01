@@ -74,6 +74,11 @@ public:
         // Chen Hongquan.
     }
 
+    uint8_t* getPduData() const
+    {
+        return pduData_;
+    }
+
     void setParseFunc(const CmaFrameParserFunc& func)
     {
         parserFunc_ = func;

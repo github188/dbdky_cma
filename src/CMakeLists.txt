@@ -16,6 +16,7 @@ set(cma_server_SRCS
   cma_server.cpp
   cma_frame.cpp
   cma_ptlrender.cpp
+  cma_ptl_fbjc.cpp
   main.cpp
 )
 
