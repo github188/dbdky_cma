@@ -5,6 +5,12 @@
 #include <port/EventLoop.h>
 #include <boost/noncopyable.hpp>
 
+
+#include <utils/Timestamp.h>
+
+#include <port/EventLoopThreadPool.h>
+
+
 namespace dbdky
 {
 namespace cma_server
@@ -26,6 +32,10 @@ private:
 
     dbdky::port::EventLoop* loop_;
     dbdky::port::TcpServer server_;
+
+    mutable MutexLock mutexTimestamp_;
+    boost::scoped_ptr<dbdky::port::EventLoopThreadPool> threadPool_;
+    uint64_t optimestamp_;
 
     const string name_;
 };

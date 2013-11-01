@@ -65,11 +65,5 @@ namespace cma_server
             pduData_ = NULL;
         }
     }
-
-    map<string,string> defaultParseFunc(const cma_frame& frm)
-    {
-        map<string,string> ret;
-        return ret;
-    }
 }
 }

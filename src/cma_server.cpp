@@ -14,6 +14,7 @@
 
 #include "crc.h"
 #include "cma_frame.h"
+#include "cma_ptlrender.h"
 
 namespace dbdky
 {
@@ -250,6 +251,8 @@ dbdky::cma_server::cma_frame validBuf2Frame(uint8_t* buffer)
 }
 }
 
+using namespace dbdky;
+using namespace dbdky::port;
 
 namespace dbdky
 {
@@ -260,12 +263,15 @@ cma_server::cma_server(dbdky::port::EventLoop* loop,
             const string& nameArg)
     : loop_(loop),
       server_(loop, listenAddr, "cma_server"),
-      name_(nameArg)
+      name_(nameArg),
+      threadPool_(new EventLoopThreadPool(loop))
 {
     server_.setConnectionCallback(
         boost::bind(&cma_server::onConnection, this, _1));
     server_.setMessageCallback(
         boost::bind(&cma_server::onMessage, this, _1, _2, _3));
+    threadPool_->setThreadNum(20);
+    threadPool_->start();
 }
 
 void cma_server::start()
@@ -301,6 +307,14 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
             delete [] framebuffer;
             //frame.dumpInfo();
             buf->retrieve(parselength);
+	    EventLoop* tmpLoop = threadPool_->getNextLoop();
+            if (NULL == tmpLoop)
+            {
+                return;
+            }
+            CmaFrameParserFunc func = cma_ptlrender::getInstance()->renderParser(frame);
+            frame.setParseFunc(func);
+            tmpLoop->runInLoop(boost::bind(&cma_frame::parse, frame)); 
             LOG_INFO << "CMA_FRM_OK";
             break;
         }

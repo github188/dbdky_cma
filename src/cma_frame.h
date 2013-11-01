@@ -79,6 +79,13 @@ public:
         parserFunc_ = func;
     }
 
+    void parse()
+    {
+        if (parserFunc_)
+        {
+            parserFunc_(*this);
+        }
+    }
 private:
     char deviceId_[17];
     ssize_t pduLength_;
