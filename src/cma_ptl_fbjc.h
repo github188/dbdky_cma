@@ -13,7 +13,7 @@ namespace dbdky
 {
 namespace cma_fbjc_parser
 {
-extern map<string,string> frameParserFunc(const cma_frame& frm);
+extern map<string,string> frameParserFunc(cma_frame& frm);
 }
 }
 

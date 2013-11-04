@@ -304,7 +304,8 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
             CmaFrameParserFunc func = cma_ptlrender::getInstance()->renderParser(frame);
             frame.setParseFunc(func);
             //tmpLoop->runInLoop(boost::bind(&cma_frame::parse, frame)); 
-            loop_->runInLoop(boost::bind(&cma_frame::parse, frame));
+            //loop_->runInLoop(boost::bind(&cma_frame::parse, frame));
+            frame.parse();
             map<string,string> datamp = frame.getMoniDataMap();
             map<string,string>::iterator itr;
             for (itr = datamp.begin(); itr != datamp.end(); itr++)

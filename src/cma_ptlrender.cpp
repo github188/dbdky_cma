@@ -50,7 +50,7 @@ namespace cma_server
         return defaultParseFunc; 
     } 
 
-    map<string,string> defaultParseFunc(const cma_frame& frm)
+    map<string,string> defaultParseFunc(cma_frame& frm)
     {
         LOG_INFO << "DEFAULTPARSEFUNC";
         map<string,string> ret;

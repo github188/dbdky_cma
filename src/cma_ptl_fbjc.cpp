@@ -19,7 +19,7 @@ namespace dbdky
 {
 namespace cma_fbjc_parser
 {
-map<string,string> frameParserFunc(const cma_frame& frm)
+map<string,string> frameParserFunc(cma_frame& frm)
 {
     map<string,string> ret;
     char*  componentId[17];
@@ -41,7 +41,7 @@ map<string,string> frameParserFunc(const cma_frame& frm)
         string sTimestamp = boost::lexical_cast<string>(timestamp);
         string sAlertflag = boost::lexical_cast<string>(alertflag);
         string sEqualicethickness = boost::lexical_cast<string>(equalicethickness);
-        string sTension = boost::lexical_cast<string>(sTension);
+        string sTension = boost::lexical_cast<string>(tension);
         string sTensiondifference = boost::lexical_cast<string>(tensiondifference);
         string sWindageyawangle = boost::lexical_cast<string>(windageyawangle);
         string sDeflectionangle = boost::lexical_cast<string>(deflectionangle);

@@ -13,9 +13,9 @@ namespace dbdky
 namespace cma_server
 {
 class cma_frame;
-typedef boost::function<map<string,string> (const cma_frame&)> CmaFrameParserFunc;
+typedef boost::function<map<string,string> (cma_frame&)> CmaFrameParserFunc;
 
-map<string,string> defaultParseFunc(const cma_frame& frm);
+map<string,string> defaultParseFunc(cma_frame& frm);
 }
 }
 
