@@ -13,9 +13,11 @@
 
 using namespace std;
 
+using dbdky::cma_server::cma_frame;
+
 namespace dbdky
 {
-namespace cma_server
+namespace cma_fbjc_parser
 {
 map<string,string> frameParserFunc(const cma_frame& frm)
 {
@@ -60,6 +62,8 @@ map<string,string> frameParserFunc(const cma_frame& frm)
     {
         return ret;
     }
+
+    return ret;
 }
 }
 }

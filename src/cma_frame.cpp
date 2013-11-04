@@ -65,5 +65,10 @@ namespace cma_server
             pduData_ = NULL;
         }
     }
+
+    void cma_frame::dumpInfo() const
+    {
+    }
+
 }
 }

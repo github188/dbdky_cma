@@ -7,6 +7,7 @@
 #include <boost/function.hpp>
 
 #include <string.h>
+
 #include <string>
 #include <map>
 
@@ -14,8 +15,7 @@
 
 #include "cma_callbacks.h"
 
-using std::string;
-using std::map;
+using namespace std;
 
 namespace dbdky
 {
@@ -66,14 +66,6 @@ public:
         return pduLength_;
     }
 
-    void dumpInfo() const
-    {
-        // What the fuck.
-        // This function took me almost 1.5 days to figure out an odd core dump.
-        // I am leaving this function blanck instead of eliminate this to prove that I have conquer this.
-        // Chen Hongquan.
-    }
-
     uint8_t* getPduData() const
     {
         return pduData_;
@@ -84,13 +76,35 @@ public:
         parserFunc_ = func;
     }
 
+    void dumpInfo() const;
+
     void parse()
     {
-        if (parserFunc_)
+        if (!parserFunc_)
         {
-            parserFunc_(*this);
+            LOG_INFO << "Parser Missing";
+            return;
         }
+
+        monidata_.clear();
+        monidata_ = parserFunc_(*this);
     }
+
+    map<string,string> getMoniDataMap() const
+    {
+        return monidata_;
+    }
+
+    CMA_FRM_TYPE getFtype() const
+    {
+        return ftype_;
+    }
+
+    CMA_PROTOCOL_TYPE getPtype() const
+    {
+        return ptype_;
+    }
+
 private:
     char deviceId_[17];
     ssize_t pduLength_;
@@ -98,6 +112,7 @@ private:
     CMA_PROTOCOL_TYPE ptype_;
     uint8_t* pduData_;
     CmaFrameParserFunc parserFunc_;
+    map<string,string> monidata_;
 };
 
 
