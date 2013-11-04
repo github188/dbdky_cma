@@ -21,7 +21,7 @@ set(cma_server_SRCS
 )
 
 add_executable(cma_server ${cma_server_SRCS})
-target_link_libraries(cma_server confutil port utils)
+target_link_libraries(cma_server confutil port utils dbhelper)
 install(TARGETS cma_server DESTINATION bin)
 
 set(cma_uploadservice_SRCS

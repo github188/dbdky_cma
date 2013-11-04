@@ -105,6 +105,11 @@ public:
         return ptype_;
     }
 
+    string getDeviceId() const
+    {
+        string ret(deviceId_);
+        return ret;
+    }
 private:
     char deviceId_[17];
     ssize_t pduLength_;

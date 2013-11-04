@@ -14,6 +14,7 @@ namespace dbdky
 namespace cma_fbjc_parser
 {
 extern map<string,string> frameParserFunc(cma_frame& frm);
+extern string sqlInsertStringMaker(const cma_frame& frm);
 }
 }
 

@@ -19,6 +19,36 @@ namespace cma_server
 
         return instance_;
     }
+
+    CmaSqlInsertStringMaker cma_ptlrender::renderSqlInsertStringMaker(const cma_frame& frm)
+    {
+        switch (frm.getPtype())
+        {
+            case cma_frame::CMA_PTYPE_QX:
+            case cma_frame::CMA_PTYPE_GT:
+            case cma_frame::CMA_PTYPE_ZDTZ:
+            case cma_frame::CMA_PTYPE_ZDBX:
+            case cma_frame::CMA_PTYPE_DXHC:
+            case cma_frame::CMA_PTYPE_WD:
+            case cma_frame::CMA_PTYPE_FP:
+            case cma_frame::CMA_PTYPE_WDTZ:
+            case cma_frame::CMA_PTYPE_WDGJ:
+            case cma_frame::CMA_PTYPE_WH:
+            {
+                return defaultSqlInsertStringMaker;
+            }
+            case cma_frame::CMA_PTYPE_FB:
+            {
+                return dbdky::cma_fbjc_parser::sqlInsertStringMaker;
+            }
+            default:
+            {
+                return defaultSqlInsertStringMaker;
+            } 
+        }
+
+        return defaultSqlInsertStringMaker;
+    }
  
     CmaFrameParserFunc cma_ptlrender::renderParser(const cma_frame& frm)
     {
@@ -44,7 +74,7 @@ namespace cma_server
             default:
             {
                 return defaultParseFunc;
-            } 
+            }
         }
 
         return defaultParseFunc; 
@@ -55,6 +85,12 @@ namespace cma_server
         LOG_INFO << "DEFAULTPARSEFUNC";
         map<string,string> ret;
         return ret;
+    }
+
+    string defaultSqlInsertStringMaker(const cma_frame& frm)
+    {
+        LOG_INFO << "DEFAULTSQLINSERTSTRINGMAKER";
+        return "";
     }
     
 }

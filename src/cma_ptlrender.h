@@ -16,6 +16,7 @@ public:
     ~cma_ptlrender(){}
 
     CmaFrameParserFunc renderParser(const cma_frame&); 
+    CmaSqlInsertStringMaker renderSqlInsertStringMaker(const cma_frame&);
 private:
     cma_ptlrender(){}
     static cma_ptlrender* instance_;

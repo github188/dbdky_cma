@@ -25,6 +25,7 @@ DBHelper::DBHelper(const string& dbpath,
 
 DBHelper::~DBHelper()
 {
+    
     driver_.reset();
 }
 

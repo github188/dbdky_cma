@@ -9,16 +9,70 @@
 
 #include <utils/Logging.h>
 #include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
+
 #include <util.h>
 
-using namespace std;
+#include <dbhelper/dbhelper.h>
+#include "ConfigUtil.h"
 
+using namespace std;
+using dbdky::cma_server::DBHelper;
 using dbdky::cma_server::cma_frame;
+using namespace dbdky;
+using namespace dbdky::port;
 
 namespace dbdky
 {
 namespace cma_fbjc_parser
 {
+string sqlInsertStringMaker(const cma_frame& frm)
+{
+    map<string,string> mp = frm.getMoniDataMap();
+    string ret("insert into `sd_fbjc` (`CDID`, `AcquisitionTime`, `Equal_IceThickness`, `Tension`, `Tension_Difference`, `Windage_Yaw_Angle`,`Deflection_Angle`) VALUES");
+
+    ret += "(";
+    
+    ret += "'";
+    ret += "CMACDID";
+    ret += "',"; 
+
+    map<string,string>::iterator itr;
+    itr = mp.find("Time_Stamp");
+    ret += "'";
+    ret += (itr == mp.end()) ? "" : itr->second;
+    ret += "',";
+
+
+    itr = mp.find("Equal_IceThickness");
+    ret += "'";
+    ret += (itr == mp.end()) ? "" : itr->second;
+    ret += "',";
+
+    itr = mp.find("Tension");
+    ret += "'";
+    ret += (itr == mp.end()) ? "" : itr->second;
+    ret += "',";
+
+    itr = mp.find("Tension_Difference");
+    ret += "'";
+    ret += (itr == mp.end()) ? "" : itr->second;
+    ret += "',";
+
+    itr = mp.find("Windage_Yaw_Angle");
+    ret += "'";
+    ret += (itr == mp.end()) ? "" : itr->second;
+    ret += "',";
+   
+    itr = mp.find("Deflection_Angle");
+    ret += "'";
+    ret += (itr == mp.end()) ? "" : itr->second;
+
+    ret += "');";
+
+    return ret;
+}
+
 map<string,string> frameParserFunc(cma_frame& frm)
 {
     map<string,string> ret;

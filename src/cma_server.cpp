@@ -296,24 +296,16 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
             cma_frame frame = detail::validBuf2Frame(framebuffer);
             delete [] framebuffer;
             buf->retrieve(parselength);
-	    //EventLoop* tmpLoop = threadPool_->getNextLoop();
-            //if (NULL == tmpLoop)
-            //{
-            //    return;
-            //}
             CmaFrameParserFunc func = cma_ptlrender::getInstance()->renderParser(frame);
             frame.setParseFunc(func);
             //tmpLoop->runInLoop(boost::bind(&cma_frame::parse, frame)); 
             //loop_->runInLoop(boost::bind(&cma_frame::parse, frame));
             frame.parse();
-            map<string,string> datamp = frame.getMoniDataMap();
-            map<string,string>::iterator itr;
-            for (itr = datamp.begin(); itr != datamp.end(); itr++)
-            {
-                LOG_INFO << "***[" << itr->first << "," << itr->second
-			<< "] ";
-            }
-
+  
+            CmaSqlInsertStringMaker maker = cma_ptlrender::getInstance()->renderSqlInsertStringMaker(frame);
+            string insertStr = maker(frame);
+            
+	    LOG_INFO <<"???" << insertStr;
             LOG_INFO << "CMA_FRM_OK";
             break;
         }
