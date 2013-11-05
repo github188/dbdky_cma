@@ -9,7 +9,9 @@
 #include <utils/Timestamp.h>
 
 #include <port/EventLoopThreadPool.h>
+#include <dbhelper/dbhelper.h>
 
+#include "cma_frame.h"
 
 namespace dbdky
 {
@@ -33,11 +35,15 @@ private:
     dbdky::port::EventLoop* loop_;
     dbdky::port::TcpServer server_;
 
+    boost::scoped_ptr<DBHelper> dbhelper_;
+
     mutable MutexLock mutexTimestamp_;
     boost::scoped_ptr<dbdky::port::EventLoopThreadPool> threadPool_;
     uint64_t optimestamp_;
 
     const string name_;
+    string getCdidOfFrame(const cma_frame& frm);
+    map<string,string> cdiddirec_;
 };
 }
 }

@@ -110,6 +110,17 @@ public:
         string ret(deviceId_);
         return ret;
     }
+
+    void setCdid(const string& id)
+    {
+        cdid_ = id;
+    }
+
+    string getCdid() const
+    {
+        return cdid_;
+    }
+
 private:
     char deviceId_[17];
     ssize_t pduLength_;
@@ -118,6 +129,7 @@ private:
     uint8_t* pduData_;
     CmaFrameParserFunc parserFunc_;
     map<string,string> monidata_;
+    string cdid_;
 };
 
 

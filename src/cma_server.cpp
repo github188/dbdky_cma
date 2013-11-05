@@ -4,9 +4,12 @@
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
+#include <utility>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -14,8 +17,10 @@
 
 #include "crc.h"
 #include "util.h"
-#include "cma_frame.h"
 #include "cma_ptlrender.h"
+#include "ConfigUtil.h"
+
+using namespace std;
 
 namespace dbdky
 {
@@ -254,6 +259,10 @@ cma_server::cma_server(dbdky::port::EventLoop* loop,
     : loop_(loop),
       server_(loop, listenAddr, "cma_server"),
       name_(nameArg),
+      dbhelper_(new DBHelper(ConfUtil::getInstance()->getDBPath(),
+               ConfUtil::getInstance()->getDBUser(),
+               ConfUtil::getInstance()->getDBPasswd(),
+               ConfUtil::getInstance()->getDBName())),
       threadPool_(new EventLoopThreadPool(loop))
 {
     server_.setConnectionCallback(
@@ -274,6 +283,60 @@ void cma_server::onConnection(const dbdky::port::TcpConnectionPtr& conn)
     LOG_INFO << "cma_server - " << conn->peerAddress().toIpPort() << " ->  "
 	<< conn->localAddress().toIpPort() << " is "
  	<< (conn->connected() ? "UP" : "DOWN");
+}
+
+string cma_server::getCdidOfFrame(const cma_frame& frm)
+{
+    string ret;
+    string searchKey(frm.getDeviceId());
+
+    map<string,string>::iterator itr;
+    itr = cdiddirec_.find(searchKey);
+    if (itr != cdiddirec_.end())
+    {
+        return itr->second;
+    }
+
+    string sql("SELECT OBJID, DeviceCode FROM sd_cd WHERE DeviceCode = \"");
+    sql += frm.getDeviceId();
+    sql += "\"";
+
+    try
+    {
+        if (!dbhelper_->isConnected())
+        {
+            if (!dbhelper_->connect())
+            {
+                return string("");
+            }
+        }
+
+        boost::shared_ptr<ResultSet> result(dbhelper_->query(sql));
+       
+        if (!result.get())
+        {
+            LOG_INFO << "NORESULT";
+            return string("");
+        }
+
+        if (result->next())
+        {
+            string queryStr = boost::lexical_cast<string>(result->getInt("OBJID"));
+      
+            LOG_INFO << "QUERYSTR: " << queryStr;
+            cdiddirec_.insert(make_pair<string,string>(searchKey,queryStr));
+            ret += queryStr;
+            return ret;
+        }
+
+        return ret;
+    }
+    catch (std::exception& e)
+    {
+        LOG_INFO << "Not found: " << e.what();
+    } 
+    
+    return ret; 
 }
 
 void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
@@ -301,7 +364,8 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
             //tmpLoop->runInLoop(boost::bind(&cma_frame::parse, frame)); 
             //loop_->runInLoop(boost::bind(&cma_frame::parse, frame));
             frame.parse();
-  
+ 
+            frame.setCdid(getCdidOfFrame(frame)); 
             CmaSqlInsertStringMaker maker = cma_ptlrender::getInstance()->renderSqlInsertStringMaker(frame);
             string insertStr = maker(frame);
             

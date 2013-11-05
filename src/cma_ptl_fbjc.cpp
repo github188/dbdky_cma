@@ -29,15 +29,16 @@ namespace cma_fbjc_parser
 string sqlInsertStringMaker(const cma_frame& frm)
 {
     map<string,string> mp = frm.getMoniDataMap();
-    string ret("insert into `sd_fbjc` (`CDID`, `AcquisitionTime`, `Equal_IceThickness`, `Tension`, `Tension_Difference`, `Windage_Yaw_Angle`,`Deflection_Angle`) VALUES");
+    string ret("insert into sd_fbjc (CDID, AcquisitionTime, Equal_IceThickness, Tension, Tension_Difference, Windage_Yaw_Angle,Deflection_Angle) VALUES");
 
     ret += "(";
     
     ret += "'";
-    ret += "CMACDID";
+    ret += frm.getCdid();
     ret += "',"; 
 
     map<string,string>::iterator itr;
+    
     itr = mp.find("Time_Stamp");
     ret += "'";
     ret += (itr == mp.end()) ? "" : itr->second;
@@ -68,7 +69,7 @@ string sqlInsertStringMaker(const cma_frame& frm)
     ret += "'";
     ret += (itr == mp.end()) ? "" : itr->second;
 
-    ret += "');";
+    ret += "')";
 
     return ret;
 }
