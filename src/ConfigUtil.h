@@ -23,7 +23,6 @@ public:
    
     //boost::function <void(const string&, const string&)> OnUpdateItem; 
 
-    InetAddress& getProxyAddress() const;
     uint16_t getSystemTick() const;
     uint32_t getHeartbeatTick() const;
     uint32_t getUploadMoniDataTick() const;

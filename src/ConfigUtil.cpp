@@ -8,11 +8,13 @@
 
 #include "tinyxml.h"
 
-using namespace dbdky;
-using namespace dbdky::port;
 
 static const string confFileName = "cma_conf.conf";
 
+namespace dbdky
+{
+namespace port
+{
 boost::shared_ptr<ConfUtil> ConfUtil::instance_;
 boost::shared_ptr<ConfUtil> ConfUtil::getInstance()
 {
@@ -40,12 +42,6 @@ ConfUtil::ConfUtil()
 {
     updateConfigs();
     dumpConfigs();
-}
-
-InetAddress& ConfUtil::getProxyAddress() const
-{
-    InetAddress proxyAddress(1000);
-    return proxyAddress;
 }
 
 uint16_t ConfUtil::getSystemTick() const
@@ -284,4 +280,6 @@ void ConfUtil::saveItem2File(const string& itemName, const string& itemValue)
     }
 
     doc.SaveFile();
+}
+}
 }
