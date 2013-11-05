@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -x
+
+../build/debug/bin/cma_server &
+../build/debug/bin/cma_uploadservice &
