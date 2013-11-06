@@ -8,6 +8,8 @@
 #include <string.h>
 
 #include <utils/Logging.h>
+#include <utils/Timestamp.h>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -93,7 +95,12 @@ map<string,string> frameParserFunc(cma_frame& frm)
 
     try
     {
-        string sTimestamp = boost::lexical_cast<string>(timestamp);
+    //    string sTimestamp = boost::lexical_cast<string>(timestamp);
+        uint64_t ms = timestamp;
+        ms *= 1000;
+        ms *= 1000;
+        Timestamp ts(ms);
+        string sTimestamp = ts.toFormattedStringDash(); 
         string sAlertflag = boost::lexical_cast<string>(alertflag);
         string sEqualicethickness = boost::lexical_cast<string>(equalicethickness);
         string sTension = boost::lexical_cast<string>(tension);
