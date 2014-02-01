@@ -25,4 +25,4 @@ mkdir -p $BUILD_DIR/$BUILD_TYPE \
     -DCMAKE_BUILD_NO_EXAMPLES=$BUILD_NO_EXAMPLES \
     $SOURCE_DIR \
   && make $*
-#cd $SOURCE_DIR && doxygen
+cd $SOURCE_DIR && doxygen
