@@ -37,10 +37,16 @@ namespace dbdky
 			Buffer*,
 			Timestamp)> MessageCallback;
 
+        typedef boost::function<void (Buffer*,
+				Timestamp)> UdpMessageCallback;
+        
         void defaultConnectionCallback(const TcpConnectionPtr& conn);
         void defaultMessageCallback(const TcpConnectionPtr& conn,
                         Buffer* buffer,
                         Timestamp receiveTime);
+
+        void defaultUdpMessageCallback(Buffer* buffer,
+			Timestamp receiveTime);
     }
 }
 

@@ -18,6 +18,7 @@ set(port_SRCS
   TcpServer.cpp
   TcpClient.cpp
   Connector.cpp 
+  UdpServer.cpp
   )
 
 add_library(port ${port_SRCS})
