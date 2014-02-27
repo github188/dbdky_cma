@@ -7,6 +7,17 @@
 using namespace dbdky;
 using namespace dbdky::port;
 
+namespace dbdky
+{
+namespace port
+{
+void defaultUdpMessageCallback(dbdky::port::Buffer* buffer, dbdky::Timestamp receiveTime)
+{
+    LOG_INFO << "";
+}
+}
+}
+
 UdpServer::UdpServer(EventLoop* loop,
 	const InetAddress& listenAddr,
 	const string& nameArg)
