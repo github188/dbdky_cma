@@ -27,6 +27,7 @@ UdpServer::UdpServer(EventLoop* loop,
 	  messageCallback_(defaultUdpMessageCallback),
 	  started_(false)
 {
+
 }
 
 UdpServer::~UdpServer()
