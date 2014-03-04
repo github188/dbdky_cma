@@ -44,7 +44,7 @@ void cma_server_legacy::start()
 void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
                 		dbdky::Timestamp time)
 {
-    LOG_INFO << "";
+    LOG_INFO << "**cma_server_legacy::onMessage ON TIME: " << time.toString();
 
 }
 }

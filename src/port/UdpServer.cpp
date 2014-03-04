@@ -52,11 +52,11 @@ UdpServer::UdpServer(EventLoop* loop,
           inetAddress_(listenAddr),
 	  hostport_(listenAddr.toIpPort()),
 	  name_(nameArg),
+          threadPool_(new EventLoopThreadPool(loop)),
 	  messageCallback_(defaultUdpMessageCallback),
 	  started_(false),
           sockfd_(0)
 {
-
 }
 
 UdpServer::~UdpServer()
@@ -105,19 +105,22 @@ void UdpServer::listen()
 
     while (1)
     {
-#if 0
-        ssize_t n = ::recvfrom(sockfd, buff, 4095, 0, (struct sockaddr*)&clientAddr, &len);
+        LOG_INFO << "sockfd_[" << sockfd_ << "]";
+        ssize_t n = ::recvfrom(sockfd_, buff, 4095, 0, (struct sockaddr*)&clientAddr, &len);
         if (n > 0)
         {
             buff[n] = 0;
             LOG_INFO << "Receive Data from: " << ::inet_ntoa(clientAddr.sin_addr) << "Port: " << ntohs(clientAddr.sin_port) << "Data: " << buff;
-
+            if (messageCallback_)
+            {
+                messageCallback_(NULL, Timestamp::now());
+            }
         }
         else
         {
-            LOG_ERROR << "Receive Error.";
+            LOG_ERROR << "Receive Error.[n]:" << n;
+            
         }
-#endif
     }
 }
 
