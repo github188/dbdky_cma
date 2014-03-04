@@ -65,7 +65,12 @@ private:
     UdpMessageCallback messageCallback_;
     ThreadInitCallback threadInitCallback_;
 
+    const InetAddress inetAddress_;
+
     bool started_;
+
+    int sockfd_;
+    void listen();
 };
 }
 }
