@@ -17,6 +17,14 @@ set(cma_server_SRCS
   cma_frame.cpp
   cma_ptlrender.cpp
   cma_ptl_fbjc.cpp
+  cma_ptl_dxwd.cpp
+  cma_ptl_gt.cpp
+  cma_ptl_qx.cpp
+  cma_ptl_zdtz.cpp
+  cma_ptl_hc.cpp
+  cma_ptl_fp.cpp
+  cma_ptl_wh.cpp
+  cma_ptl_wdtz.cpp
   main.cpp
 )
 

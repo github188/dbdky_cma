@@ -43,6 +43,22 @@ const uint8_t auchCRCLo[] = {
 	0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
 	0x40
 };
+//xinsy20140213
+uint16_t crc16(uint8_t *puchMsg, uint16_t usDataLen)
+{
+    uint8_t uchCRCHi = 0xff;
+    uint8_t uchCRCLo = 0xff;
+    uint16_t uIndex;
+
+    while (usDataLen--)
+    {
+        uIndex = uchCRCHi ^ *puchMsg++;
+        uchCRCHi = uchCRCLo ^ auchCRCHi[uIndex];
+        uchCRCLo = auchCRCLo[uIndex];
+    }
+
+    return (uchCRCHi << 8 | uchCRCLo);
+}
 
 #endif // _CN_CRC_H_
 

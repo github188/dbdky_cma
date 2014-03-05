@@ -52,6 +52,11 @@ public:
         CMA_PTYPE_WDTZ = 0x24,
         CMA_PTYPE_WDGJ = 0x25,
         CMA_PTYPE_WH = 0x5c,
+		//xinsy20140213
+		CMA_PTYPE_REQ_UP_IMAGE = 0xcc,						
+		CMA_PTYPE_REMOTE_IMAGE = 0xcd,						
+		CMA_PTYPE_REMOTE_IMAGE_UP_COMPLETE = 0xce,			
+		CMA_PTYPE_REMOTE_IMAGE_COMPLEMENT = 0xcf,	
         CMA_PTYPE_UNKNOWN
     };
 
