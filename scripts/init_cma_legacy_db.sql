@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS `cma_legacy_devtypes`;
 CREATE TABLE `cma_legacy_devtypes` (
   `OBJID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `TypeName` varchar(10) NOT NULL default '',
-  `TypeCommnet` varchar(10) NOT NULL default '',
+  `TypeComment` varchar(10) NOT NULL default '',
   `TypeID` tinyint(4) NOT NULL default 0,
   `DataTableName` varchar(20) NOT NULL default '',
   PRIMARY KEY (`OBJID`),
