@@ -45,3 +45,14 @@ set(wdjc_unittest_SRCS
 add_executable(wdjc_unittest ${wdjc_unittest_SRCS})
 target_link_libraries(wdjc_unittest port utils)
 install(TARGETS wdjc_unittest DESTINATION bin)
+
+
+set(legacy_qxjc_unittest_SRCS
+  legacy_qxjc_unittest.cpp
+  cma_client.cpp
+)
+
+add_executable(legacy_qxjc_unittest ${legacy_qxjc_unittest_SRCS})
+target_link_libraries(legacy_qxjc_unittest port utils)
+install(TARGETS legacy_qxjc_unittest DESTINATION bin)
+

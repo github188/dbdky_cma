@@ -13,6 +13,8 @@
 
 #include <dbhelper/dbhelper.h>
 
+#include "cma_frame_legacy.h"
+
 namespace dbdky
 {
 namespace cma_server

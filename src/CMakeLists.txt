@@ -34,7 +34,12 @@ install(TARGETS cma_server DESTINATION bin)
 
 set(cma_server_legacy_SRCS
   cma_server_legacy.cpp
+  cma_ptlrender_legacy.cpp
+  cma_ptl_legacy_qx.cpp
+  cma_ptl_legacy_dxwd.cpp
+  cma_frame_legacy.cpp
   cma_server_legacy_main.cpp
+
 )
 
 add_executable(cma_server_legacy ${cma_server_legacy_SRCS})
