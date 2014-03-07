@@ -4,11 +4,15 @@
 
 #include <boost/bind.hpp>
 
+#include <sys/types.h>
+#include <unistd.h>
+#include <pthread.h>
+
 using namespace dbdky;
 
 void Task()
 {
-    LOG_INFO << "Task";
+    LOG_INFO << "Task: tid = " << pthread_self();
 }
 
 int main(int argc, char** argv)
