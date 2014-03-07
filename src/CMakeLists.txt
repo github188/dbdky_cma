@@ -45,6 +45,9 @@ set(cma_server_legacy_SRCS
   cma_session_imagerecvreq.cpp
   cma_session_imagetrans.cpp
   cma_session_imagetransfinish.cpp
+  cma_session.cpp
+  cma_datasession.cpp
+  cma_imagesession.cpp
   cma_server_legacy_main.cpp
 )
 
