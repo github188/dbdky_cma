@@ -48,6 +48,7 @@ set(cma_server_legacy_SRCS
   cma_session.cpp
   cma_datasession.cpp
   cma_imagesession.cpp
+  cma_sessionpool.cpp
   cma_server_legacy_main.cpp
 )
 

@@ -7,7 +7,7 @@ namespace dbdky
 namespace cma_server
 {
 cma_datasession::cma_datasession(const string name)
-    : cma_session(boost::bind(&cma_datasession::workFunction, this), name)
+    : cma_session(name)
 {
 }
 

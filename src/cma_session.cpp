@@ -1,12 +1,15 @@
 #include "cma_session.h"
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace dbdky
 {
 namespace cma_server
 {
-cma_session::cma_session(const ThreadFunc& func, const string& name)
+cma_session::cma_session(const string& name)
     : name_(name),
-      thread_(new Thread(func, name))
+      thread_(new Thread(
+	boost::bind(&dbdky::cma_server::cma_session::idleFunc, this), name))
 {
 }
 
@@ -56,6 +59,15 @@ bool cma_session::started() const
     return thread_->started();
 }
 
+void cma_session::handleInSession(const cma_frame_legacy& frm) const
+{
+    //TODO:
+}
+
+void cma_session::idleFunc()
+{
+    //TODO:
+}
 
 }
 }

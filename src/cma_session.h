@@ -19,9 +19,8 @@ class cma_session : boost::noncopyable
 public:
     typedef boost::function<void ()> ThreadFunc;
 
-    explicit cma_session(const Thread::ThreadFunc& func, const string& name = string());
+    explicit cma_session(const string& name = string());
     virtual ~cma_session();
-    //void handleFrame(const shared_ptr<cma_frame_legacy>& frame);
     const string& getSessionName() const;
     
     void start();
@@ -29,10 +28,12 @@ public:
 
     bool started() const;
 
+    void handleInSession(const cma_frame_legacy&) const;
 protected:
     cma_session_state* state_;
 
 private:
+    void idleFunc();
     boost::shared_ptr<Thread> thread_;
     
     const string name_;
