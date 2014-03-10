@@ -2,12 +2,17 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <utils/Logging.h>
+
 namespace dbdky
 {
 namespace cma_server
 {
 cma_session::cma_session(const string& name)
     : name_(name),
+      mutex_(),
+      message_(mutex_),
+      pending_frame(NULL),
       thread_(new Thread(
 	boost::bind(&dbdky::cma_server::cma_session::idleFunc, this), name))
 {
@@ -24,6 +29,15 @@ cma_session::~cma_session()
     {
         delete state_;
         state_ = NULL;
+    }
+
+    {
+        MutexLockGuard lock(mutex_);
+        if (NULL != pending_frame)
+        {
+            delete pending_frame;
+            pending_frame = NULL;
+        }
     }
 }
 
@@ -59,14 +73,46 @@ bool cma_session::started() const
     return thread_->started();
 }
 
-void cma_session::handleInSession(const cma_frame_legacy& frm) const
+void cma_session::handleInSession(const cma_frame_legacy& frm)
 {
-    //TODO:
+    {
+        MutexLockGuard lock(mutex_);
+        if (pending_frame)
+        {
+            delete pending_frame;
+        }
+
+        pending_frame = new cma_frame_legacy(frm);
+        
+        message_.notify(); 
+    }
 }
 
 void cma_session::idleFunc()
 {
     //TODO:
+    LOG_INFO << "***DILE FUCNC";
+    cma_frame_legacy* tmp = NULL;
+
+    {
+        MutexLockGuard lock(mutex_);
+        tmp = pending_frame;
+    }
+
+    if (tmp == NULL)
+    {
+        message_.wait();
+    }
+
+    if (NULL != state_)
+    {
+        state_->handleFrame(tmp);
+    }
+}
+
+void cma_session::changeState(cma_session_state* state)
+{
+    state_ = state;
 }
 
 }
