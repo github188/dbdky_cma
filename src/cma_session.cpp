@@ -115,5 +115,20 @@ void cma_session::changeState(cma_session_state* state)
     state_ = state;
 }
 
+//xinsy20140310
+void cma_session_state::handleFrame(cma_frame_legacy* frame)
+{
+    LOG_INFO << "";
+}
+
+Buffer* cma_session_state::makeResponse()
+{
+    LOG_INFO << "";
+    return NULL;
+}
+
+
+
+
 }
 }

@@ -38,7 +38,7 @@ set(cma_server_legacy_SRCS
   cma_ptl_legacy_qx.cpp
   cma_ptl_legacy_dxwd.cpp
   cma_frame_legacy.cpp
-  cma_session_state.cpp
+  #cma_session_state.cpp
   cma_session_wait.cpp
   cma_session_hasdata.cpp
   cma_session_imageinit.cpp

@@ -4,6 +4,7 @@
 
 #include <port/Buffer.h>
 #include <boost/shared_ptr.hpp>
+#include "cma_session.h"	//xinsy20140310
 
 using namespace dbdky;
 using namespace dbdky::port;
@@ -12,7 +13,7 @@ namespace dbdky
 {
 namespace cma_server
 {
-class cma_session;
+class cma_session;	
 class cma_session_state
 {
 public:

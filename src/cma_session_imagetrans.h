@@ -1,7 +1,8 @@
 #ifndef __CMA_SESSION_IMAGETRANS_H_
 #define __CMA_SESSION_IMAGETRANS_H_
 
-#include "cma_session_state.h"
+//#include "cma_session_state.h"
+#include "cma_session.h"	//xinsy20140310
 
 namespace dbdky
 {
