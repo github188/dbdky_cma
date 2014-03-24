@@ -43,6 +43,7 @@ namespace cma_server
         ptype_ = frm.ptype_;
         pduLength_ = frm.pduLength_;
         parserFunc_ = frm.parserFunc_;
+        memcpy(deviceId_, frm.deviceId_, 17);
         if (frm.pduData_)
         {
             if (pduData_)
