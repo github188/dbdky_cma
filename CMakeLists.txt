@@ -22,7 +22,7 @@ set(CXX_FLAGS
   )
 
 
-if(CMKAE_BUILD_BITS EQUAL 32)
+if(CMAKE_BUILD_BITS EQUAL 32)
   list(APPEND CXX_FLAGS "-m32")
 endif()
 
