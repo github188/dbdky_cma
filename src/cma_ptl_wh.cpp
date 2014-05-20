@@ -14,6 +14,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <util.h>
+#include <Hex2FloatConvert.h>			//xinsy20140324
 
 #include <dbhelper/dbhelper.h>
 #include "ConfigUtil.h"
@@ -31,7 +32,7 @@ namespace cma_wh_parser
 string sqlInsertStringMaker(const cma_frame& frm)
 {
     map<string,string> mp = frm.getMoniDataMap();
-    string ret("insert into sd_wh (CDID, AcquisitionTime, ESDD, NSDD,Daily_Max_Temperature,Daily_Min_Temperature,Daily_Max_Humidity,Daily_Min_Humidity) VALUES");
+    string ret("insert into sd_jyzwh (CDID, AcquisitionTime, ESDD, NSDD,Daily_Max_Temperature,Daily_Min_Temperature,Daily_Max_Humidity,Daily_Min_Humidity) VALUES");
 
 
     ret += "(";
@@ -90,10 +91,14 @@ map<string,string> frameParserFunc(cma_frame& frm)
 
     	uint32_t timestamp = makelong(makeword(data[17], data[18]), makeword(data[19], data[20]));
 	uint16_t alertflag = makeword(data[21], data[22]);
-	uint32_t ESDD = makelong(makeword(data[23], data[24]), makeword(data[25], data[26]));
-	uint32_t NSDD = makelong(makeword(data[27], data[28]), makeword(data[29], data[30]));
-	uint32_t daily_Max_Temperature = makelong(makeword(data[31], data[32]), makeword(data[33], data[34]));
-	uint32_t daily_Min_Temperature = makelong(makeword(data[35], data[36]), makeword(data[37], data[38]));
+	uint32_t ESDD_tmp = makelong(makeword(data[23], data[24]), makeword(data[25], data[26]));	//xinsy20140324
+	float ESDD= getDecNumber(ESDD_tmp);								//xinsy20140324
+	uint32_t NSDD_tmp = makelong(makeword(data[27], data[28]), makeword(data[29], data[30]));	//xinsy20140324
+	float NSDD= getDecNumber(NSDD_tmp);								//xinsy20140324
+	uint32_t daily_Max_Temperature_tmp = makelong(makeword(data[31], data[32]), makeword(data[33], data[34]));	//xinsy20140324
+	float daily_Max_Temperature= getDecNumber(daily_Max_Temperature_tmp);				//xinsy20140324
+	uint32_t daily_Min_Temperature_tmp = makelong(makeword(data[35], data[36]), makeword(data[37], data[38]));	//xinsy20140324
+	float daily_Min_Temperature= getDecNumber(daily_Min_Temperature_tmp);				//xinsy20140324
 	uint16_t daily_Max_Humidity = makeword(data[39], data[40]);
 	uint16_t daily_Min_Humidity = makeword(data[41], data[42]);
 
@@ -118,6 +123,15 @@ map<string,string> frameParserFunc(cma_frame& frm)
 
 		string sReverse1 = boost::lexical_cast<string>(reserve1);
 		string sReverse2 = boost::lexical_cast<string>(reserve2);
+
+	#if 1	//xinsy20140324
+		LOG_INFO << "ESDD : " << sESDD;
+		LOG_INFO << "NSDD : " << sNSDD;
+		LOG_INFO << "Daily_Max_Temperature : " << sDaily_Max_Temperature;
+		LOG_INFO << "Daily_Min_Temperature : " << sDaily_Min_Temperature;
+		LOG_INFO << "Daily_Max_Humidity : " << sDaily_Max_Humidity;
+		LOG_INFO << "Daily_Min_Humidity : " << sDaily_Min_Humidity;
+	#endif 
 
 
 		ret.insert(make_pair<string,string>("Time_Stamp",sTimestamp));

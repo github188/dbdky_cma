@@ -26,23 +26,6 @@ namespace dbdky
 {
 namespace detail
 {
-#if 0 //xinsy20140213
-uint16_t crc16(uint8_t *puchMsg, uint16_t usDataLen)
-{
-    uint8_t uchCRCHi = 0xff;
-    uint8_t uchCRCLo = 0xff;
-    uint16_t uIndex;
-
-    while (usDataLen--)
-    {
-        uIndex = uchCRCHi ^ *puchMsg++;
-        uchCRCHi = uchCRCLo ^ auchCRCHi[uIndex];
-        uchCRCLo = auchCRCLo[uIndex];
-    }
-
-    return (uchCRCHi << 8 | uchCRCLo);
-}
-#endif
 const uint16_t CMA_PACKET_HEADER = 0x5aa5;
 
 enum FrameParseErr
@@ -265,127 +248,7 @@ dbdky::cma_server::cma_frame validBuf2Frame(uint8_t* buffer)
 
     return ret;
 }
-//make response packet //xinsy20140213
-#if 1
-uint16_t makeResponseFrame(bool ok,dbdky::cma_server::cma_frame frame,const uint8_t **serialData)
-{
-       #if 0
-	dbdky::cma_server::cma_frame respFrm;
-	respFrm.setPduLength(1);
-	frame_.setPduLength(1);
-	respFrm.setDeviceId(frame.getDeviceId());
-	respFrm.setPtype(frame.getPtype());
-	switch (frame.getFtype())
-	{
-	case dbdky::cma_server::cma_frame::CMA_FRM_MONIDATA:
-		{
-			respFrm.setFtype(dbdky::cma_server::cma_frame::CMA_FRM_DATARESP);
-
-			break;
-		}
-	case dbdky::cma_server::cma_frame::CMA_FRM_CTRL:
-		{
-			respFrm.setFtype(dbdky::cma_server::cma_frame::CMA_FRM_CTRLRESP);
-			break;
-		}
-	case dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUS:
-		{
-			respFrm.setFtype(dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUSRESP);
-			break;
-		}
-	default:
-		{
-			//TODO:
-			break;
-		}
-	}
-
-	uint8_t* data = new uint8_t[1];
-
-	if (ok)
-	{
-		data[0] = 0xFF;
-		respFrm.setPduData(data);
-	
-	}
-	else
-	{
-		data[0] = 0x00;
-		respFrm.setPduData(data);
-	}
-     #endif
-
-     #if 1
-	uint16_t ret;
-	uint8_t *tmpBuf;
-        uint16_t length = 1;
-	ret = length + 25;
-
-	tmpBuf = new uint8_t[ret];
-
-	tmpBuf[0] = 0xa5;
-	tmpBuf[1] = 0x5a;
-	tmpBuf[2] = (length<<8)&0xff;
-	tmpBuf[3] = length&0xff;
-
-	string 	deviceId;
-        deviceId = frame.getDeviceId();
-	const char* pDeviceId= deviceId.c_str();
-        for(int tmp = 0;tmp<17;tmp++)
-	{
-	    tmpBuf[tmp+4]= pDeviceId[tmp];
-	}
-	
-	switch (frame.getFtype())
-	{
-	case dbdky::cma_server::cma_frame::CMA_FRM_MONIDATA:
-		{
-			tmpBuf[21] = dbdky::cma_server::cma_frame::CMA_FRM_DATARESP;
-
-			break;
-		}
-	case dbdky::cma_server::cma_frame::CMA_FRM_CTRL:
-		{
-			tmpBuf[21] = dbdky::cma_server::cma_frame::CMA_FRM_CTRLRESP;
-			break;
-		}
-	case dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUS:
-		{
-			tmpBuf[21] = dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUSRESP;
-			break;
-		}
-	default:
-		{
-			//TODO:
-			break;
-		}
-	}
-
-	//tmpBuf[21] = ftype_;
-	tmpBuf[22] = frame.getPtype();
-
-	uint8_t* data = new uint8_t[1];
-
-	if (ok)
-	{
-		tmpBuf[23] = 0xFF;
-	
-	}
-	else
-	{
-		tmpBuf[23] = 0x00;
-	}
-
-	uint16_t crc = crc16(tmpBuf, length+23);
-	tmpBuf[23 + length] = (crc<<8)&0xff;
-	tmpBuf[24 + length] = crc&0xff;
-	*serialData = tmpBuf;
-
-	return ret;
-     #endif
-
-}
-#endif
+       
 }
 }
 
@@ -481,6 +344,93 @@ string cma_server::getCdidOfFrame(const cma_frame& frm)
     
     return ret; 
 }
+//xinsy20140324
+uint16_t cma_server::makeResponseFrame(bool ok,const cma_frame &frame,const uint8_t **serialData)
+{
+	uint16_t ret;
+	uint8_t *tmpBuf;
+        uint16_t length = 1;
+	ret = length + 25;
+
+	tmpBuf = new uint8_t[ret];
+
+	tmpBuf[0] = 0xa5;
+	tmpBuf[1] = 0x5a;
+	//xinsy20140324
+	//tmpBuf[2] = (length>>8)&0xff;
+	//tmpBuf[3] = length&0xff;
+
+	tmpBuf[2] = length&0xff;
+	tmpBuf[3] = (length>>8)&0xff;
+	
+	//xinsy20140324
+	string 	deviceId;
+        deviceId = frame.getDeviceId();
+	const char* pDeviceId= deviceId.c_str();
+
+        for(int tmp = 0;tmp<17;tmp++)
+	{
+	    tmpBuf[tmp+4]= pDeviceId[tmp];
+	}
+
+
+	
+	switch (frame.getFtype())
+	{
+	case dbdky::cma_server::cma_frame::CMA_FRM_MONIDATA:
+		{
+			tmpBuf[21] = dbdky::cma_server::cma_frame::CMA_FRM_DATARESP;
+
+			break;
+		}
+	case dbdky::cma_server::cma_frame::CMA_FRM_CTRL:
+		{
+			tmpBuf[21] = dbdky::cma_server::cma_frame::CMA_FRM_CTRLRESP;
+			break;
+		}
+	case dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUS:
+		{
+			tmpBuf[21] = dbdky::cma_server::cma_frame::CMA_FRM_OPSTATUSRESP;
+			break;
+		}
+	default:
+		{
+			//TODO:
+			break;
+		}
+	}
+
+	//tmpBuf[21] = ftype_;
+	tmpBuf[22] = frame.getPtype();
+
+	uint8_t* data = new uint8_t[1];
+
+	if (ok)
+	{
+		tmpBuf[23] = 0xFF;
+	
+	}
+	else
+	{
+		tmpBuf[23] = 0x00;
+	}
+
+	uint16_t crc = crc16(tmpBuf, length+23);
+	//xinsy20140324
+	//tmpBuf[23 + length] = (crc>>8)&0xff;
+	//tmpBuf[24 + length] = crc&0xff;
+
+	tmpBuf[23 + length] = crc&0xff;
+	tmpBuf[24 + length] = (crc>>8)&0xff;
+
+
+	*serialData = tmpBuf;
+
+	return ret;
+
+}
+
+
 
 void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
 		dbdky::port::Buffer* buf,
@@ -508,23 +458,37 @@ void cma_server::onMessage(const dbdky::port::TcpConnectionPtr& conn,
             //tmpLoop->runInLoop(boost::bind(&cma_frame::parse, frame)); 
             //loop_->runInLoop(boost::bind(&cma_frame::parse, frame));
             frame.parse();
- 
-            frame.setCdid(getCdidOfFrame(frame)); 
+
+ 	    frame.dumpInfo();	//xinsy20140324
+	
+	    frame.setCdid(getCdidOfFrame(frame)); 
             CmaSqlInsertStringMaker maker = cma_ptlrender::getInstance()->renderSqlInsertStringMaker(frame);
             string insertStr = maker(frame);
-            
-			LOG_INFO <<"???" << insertStr;
-            LOG_INFO << "CMA_FRM_OK";
-
-			//xinsy20140213 the server give a reply to cilent as a response  when the server receive the correct frame 
-		#if 1
-			const uint8_t *data;
-            uint16_t len = detail::makeResponseFrame(true,frame,&data);
-			LOG_INFO << "The response frame 's length is "<<len;
-			string dataStr((const char*)data);
-			LOG_INFO << "The response frame is  "<<data;
-			conn->send(data,len);
-		#endif
+  //   	    LOG_INFO <<"???" << insertStr;
+          
+	   if(insertStr.empty())//xinsy20140324
+	   {
+		return;
+	   }
+	   boost::shared_ptr<ResultSet> result(dbhelper_->query(insertStr));
+            //if (!result.get())
+            //{
+            //	LOG_INFO << "the data insert operation failed!";
+            //}
+	   //else
+	    {  
+		 LOG_INFO << "CMA_FRM_OK";
+		//xinsy20140213 the server give a reply to cilent as a response  when the server receive the correct frame 
+	      #if 1
+		const uint8_t *data;
+		//uint16_t len = detail::makeResponseFrame(true,frame,&data);	//xinsy20140324
+		uint16_t len = makeResponseFrame(true,frame,&data);	//xinsy20140324
+		LOG_INFO << "The response frame 's length is "<<len;
+		string dataStr((const char*)data);
+	//	LOG_INFO << "The response frame is  "<<data;
+		conn->send(data,len);
+	      #endif
+	    }
             break;
         }
         case detail::CMA_FRM_INSUFFICIENT:
