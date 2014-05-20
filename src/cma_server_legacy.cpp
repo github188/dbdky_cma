@@ -263,7 +263,7 @@ dbdky::cma_server::cma_frame_legacy validBuf2Frame(uint8_t* buffer)
 
     return ret;
 }
-
+#if 0
 uint16_t makeResponseFrame(bool ok,dbdky::cma_server::cma_frame_legacy frame,const uint8_t **serialData)
 {
 	uint16_t ret;
@@ -327,6 +327,7 @@ uint16_t makeResponseFrame(bool ok,dbdky::cma_server::cma_frame_legacy frame,con
 	return ret;
 
 }
+#endif
 
 }
 }
@@ -354,6 +355,78 @@ void cma_server_legacy::start()
 {
     server_.start();
 }
+
+#if 1
+//xinsy20140327
+uint16_t cma_server_legacy::makeResponseFrame(bool ok,const cma_frame_legacy &frame,const uint8_t **serialData)
+{
+	uint16_t ret;
+	uint8_t *tmpBuf;
+        uint16_t length = 1;
+	ret = length + 10;
+
+	tmpBuf = new uint8_t[ret];
+
+	tmpBuf[0] = 0xa5;
+	tmpBuf[1] = 0x5a;
+	tmpBuf[6] = length&0xff;	//xinsy20140327
+	tmpBuf[7] = (length>>8)&0xff;   //xinsy20140327
+
+	string 	deviceId;
+        deviceId = frame.getDeviceId();
+	const char* pDeviceId= deviceId.c_str();
+        for(int tmp = 0;tmp<2;tmp++)
+	{
+	    tmpBuf[tmp+2]= pDeviceId[tmp];
+	}
+	
+	switch (frame.getFtype())
+	{
+	case dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_MONIDATA:
+		{
+			tmpBuf[4] = dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_DATARESP;
+			break;
+		}
+	case dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_CTRL:
+		{
+			tmpBuf[4] = dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_CTRLRESP;
+
+			break;
+		}
+	default:
+		{
+
+			//TODO:
+			break;
+		}
+	}
+
+
+	tmpBuf[5] = frame.getPtype();
+
+	uint8_t* data = new uint8_t[1];
+
+	if (ok)
+	{
+		tmpBuf[8] = 0xFF;
+	
+	}
+	else
+	{
+		tmpBuf[8] = 0x00;
+	}
+
+	uint16_t crc = crc16(tmpBuf, length+10-2);
+	tmpBuf[10-2 + length] = crc&0xff;	//xinsy20140327
+
+	tmpBuf[10-1 + length] = (crc>>8)&0xff;	//xinsy20140327
+	*serialData = tmpBuf;
+
+	return ret;
+
+
+}
+#endif
 
 void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
                 		dbdky::Timestamp time)

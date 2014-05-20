@@ -31,6 +31,7 @@ private:
     void onMessage(const dbdky::port::TcpConnectionPtr& conn,
         dbdky::port::Buffer* buf,
         dbdky::Timestamp time);
+    uint16_t makeResponseFrame(bool ok,const cma_frame &frame,const uint8_t **serialData);	//xinsy20140324
 
     dbdky::port::EventLoop* loop_;
     dbdky::port::TcpServer server_;

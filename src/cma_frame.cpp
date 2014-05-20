@@ -43,7 +43,7 @@ namespace cma_server
         ptype_ = frm.ptype_;
         pduLength_ = frm.pduLength_;
         parserFunc_ = frm.parserFunc_;
-        memcpy(deviceId_, frm.deviceId_, 17);
+	memcpy(deviceId_,frm.deviceId_,17);//xinsy20140324
         if (frm.pduData_)
         {
             if (pduData_)
@@ -66,9 +66,17 @@ namespace cma_server
             pduData_ = NULL;
         }
     }
-
+    //xinsy20140326
     void cma_frame::dumpInfo() const
     {
+	string strFtype = boost::lexical_cast<string>(ftype_);
+	string strPtype = boost::lexical_cast<string>(ptype_);
+	string strPduData = boost::lexical_cast<string>(pduData_);
+	string strDeviceId = boost::lexical_cast<string>(deviceId_);
+	LOG_INFO<<"deviceId:"<<strDeviceId;
+	LOG_INFO<<"ftype:"<<strFtype;
+	LOG_INFO<<"ptype:"<<strPtype;
+	LOG_INFO<<"PduData:"<<strPduData;
     }
 
 }

@@ -20,7 +20,6 @@ namespace detail
 string upLoadCMAData(const string& msg)
 {
     CAGAccessServiceHttpBindingProxy service;
-    soap_set_mode(&service, SOAP_C_MBSTRING);
     _ns1__uploadCMAData param;
     _ns1__uploadCMADataResponse response;
 

@@ -41,7 +41,7 @@ public:
 
     void handleInSession(const cma_frame_legacy&);
 private:
-    //friend class cma_session_state;		//xinsy20140310
+    //friend class cma_session_state;			//xinsy20140310
     cma_session_state* state_;
     void changeState(cma_session_state*); 
     

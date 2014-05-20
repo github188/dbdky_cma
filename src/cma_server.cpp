@@ -43,7 +43,7 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
     const char* sourceData = buf->peek();
     int length = buf->readableBytes();
   
-    if ((NULL == sourceData) || (length < 25))
+   if ((NULL == sourceData) || (length < 25))
     {
         ret = CMA_FRM_INSUFFICIENT;
         *frameLength = length;
