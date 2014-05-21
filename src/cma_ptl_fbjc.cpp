@@ -79,7 +79,10 @@ string sqlInsertStringMaker(const cma_frame& frm)
 map<string,string> frameParserFunc(cma_frame& frm)
 {
     map<string,string> ret;
-    char*  componentId[17];
+    //Chen Hongquan modify, begin
+    //char*  componentId[17];
+    char componentId[17];
+    //Chen Hongquan modify, end
     const uint8_t* data = const_cast<cma_frame*>(&frm)->getPduData();
     memcpy(componentId, data, 17);
 
