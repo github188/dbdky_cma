@@ -23,7 +23,7 @@ namespace cma_server
         return instance_;
     }
 
-    CmaUdpSqlInsertStringMaker cma_ptlrender_legacy::renderSqlInsertStringMaker(const cma_frame_legacy& frm)
+    CmaLegacySqlInsertStringMaker cma_ptlrender_legacy::renderSqlInsertStringMaker(const cma_frame_legacy& frm)
     {
         switch (frm.getPtype())
         {
@@ -75,7 +75,7 @@ namespace cma_server
     }
  
 
-    CmaUdpFrameParserFunc cma_ptlrender_legacy::renderParser(const cma_frame_legacy& frm)
+    CmaLegacyFrameParserFunc cma_ptlrender_legacy::renderParser(const cma_frame_legacy& frm)
     {
         switch (frm.getPtype())
         {

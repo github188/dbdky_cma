@@ -15,8 +15,8 @@ public:
     static cma_ptlrender_legacy* getInstance();
     ~cma_ptlrender_legacy(){}
 
-    CmaUdpFrameParserFunc renderParser(const cma_frame_legacy&); 
-    CmaUdpSqlInsertStringMaker renderSqlInsertStringMaker(const cma_frame_legacy&);
+    CmaLegacyFrameParserFunc renderParser(const cma_frame_legacy&); 
+    CmaLegacySqlInsertStringMaker renderSqlInsertStringMaker(const cma_frame_legacy&);
 private:
     cma_ptlrender_legacy(){}
     static cma_ptlrender_legacy* instance_;

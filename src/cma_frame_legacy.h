@@ -79,7 +79,7 @@ public:
         return pduData_;
     }
 
-    void setParseFunc(const CmaUdpFrameParserFunc& func)
+    void setParseFunc(const CmaLegacyFrameParserFunc& func)
     {
         parserFunc_ = func;
     }
@@ -135,7 +135,7 @@ private:
     CMA_UDP_FRM_TYPE ftype_;
     CMA_UDP_PROTOCOL_TYPE ptype_;
     uint8_t* pduData_;
-    CmaUdpFrameParserFunc parserFunc_;
+    CmaLegacyFrameParserFunc parserFunc_;
     map<string,string> monidata_;
     string cdid_;
 };

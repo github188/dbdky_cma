@@ -356,13 +356,24 @@ void cma_server_legacy::start()
     server_.start();
 }
 
+string cma_server_legacy::getCdidOfFrame(const cma_frame_legacy& frm)
+{
+   // string ret;
+   // string searchKey(frm.getDeviceId());
+
+   // map<string,string>::iterator itr;
+   
+    return string();
+
+}
+
 #if 1
 //xinsy20140327
 uint16_t cma_server_legacy::makeResponseFrame(bool ok,const cma_frame_legacy &frame,const uint8_t **serialData)
 {
 	uint16_t ret;
 	uint8_t *tmpBuf;
-        uint16_t length = 1;
+    uint16_t length = 1;
 	ret = length + 10;
 
 	tmpBuf = new uint8_t[ret];
@@ -373,27 +384,27 @@ uint16_t cma_server_legacy::makeResponseFrame(bool ok,const cma_frame_legacy &fr
 	tmpBuf[7] = (length>>8)&0xff;   //xinsy20140327
 
 	string 	deviceId;
-        deviceId = frame.getDeviceId();
+    deviceId = frame.getDeviceId();
 	const char* pDeviceId= deviceId.c_str();
-        for(int tmp = 0;tmp<2;tmp++)
+    for(int tmp = 0;tmp<2;tmp++)
 	{
 	    tmpBuf[tmp+2]= pDeviceId[tmp];
 	}
 	
 	switch (frame.getFtype())
 	{
-	case dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_MONIDATA:
+	    case dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_MONIDATA:
 		{
 			tmpBuf[4] = dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_DATARESP;
 			break;
 		}
-	case dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_CTRL:
+	    case dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_CTRL:
 		{
 			tmpBuf[4] = dbdky::cma_server::cma_frame_legacy::CMA_UDP_FRM_CTRLRESP;
 
 			break;
 		}
-	default:
+	    default:
 		{
 
 			//TODO:
@@ -432,7 +443,78 @@ void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
                 		dbdky::Timestamp time)
 {
     LOG_INFO << "**cma_server_legacy::onMessage ON TIME: " << time.toString();
+    int parselength;
+    detail::FrameParseErr res;
+    res = detail::checkCMAFrame(buf, &parselength);
 
+    switch(res)
+    {
+        case detail::CMA_FRM_OK:
+        {
+            uint8_t* framebuffer = new uint8_t[parselength];
+            memcpy(framebuffer, buf->peek(), parselength);
+            cma_frame_legacy frame = detail::validBuf2Frame(framebuffer);
+            delete [] framebuffer;
+            buf->retrieve(parselength);
+            CmaLegacyFrameParserFunc func = cma_ptlrender_legacy::getInstance()->renderParser(frame);
+            frame.setParseFunc(func);
+
+            frame.parse();
+            frame.dumpInfo();
+
+            frame.setCdid(getCdidOfFrame(frame));
+            CmaLegacySqlInsertStringMaker maker = cma_ptlrender_legacy::getInstance()->renderSqlInsertStringMaker(frame);
+            string insertStr = maker(frame);
+
+            if (insertStr.empty())
+            {
+                return;
+            }
+
+            boost::shared_ptr<ResultSet> result(dbhelper_->query(insertStr));
+
+            LOG_INFO << "CMA_FRM_OK";
+
+            const uint8_t* data;
+            uint16_t len = makeResponseFrame(true, frame, &data);
+            LOG_INFO << "The response frame 's length is " << len;
+            string dataStr((const char*)data);
+            //TODO:
+            //Send the response.
+
+
+            break;
+        }
+        case detail::CMA_FRM_INSUFFICIENT:
+        {
+            LOG_INFO << "CMA_FRM_INSUFFICIENT";
+            break;
+        }
+        case detail::CMA_FRM_BAD_FRAME:
+        {
+            LOG_INFO << "CMA_FRM_BAD_FRAME";
+            buf->retrieve(parselength);
+            break;
+        }
+        case detail::CMA_FRM_CRC:
+        {
+            LOG_INFO << "CMA_FRM_CRC";
+            buf->retrieve(parselength);
+            break;
+        }
+        case detail::CMA_FRM_UNKNOWN:
+        {
+            LOG_INFO << "CMA_FRM_UNKNOWN";
+            buf->retrieve(parselength);
+            break;
+        }
+        default:
+        {
+            LOG_INFO << "default";
+            buf->retrieve(parselength);
+            break;
+        }
+    }
 }
 }
 }

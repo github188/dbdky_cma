@@ -7,6 +7,7 @@
 #include <port/Buffer.h>
 
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <utils/Timestamp.h>
 #include <utils/ThreadPool.h>
@@ -37,6 +38,15 @@ private:
     dbdky::port::UdpServer server_;
 
     const string name_;
+
+    boost::scoped_ptr<DBHelper> dbhelper_;
+
+    mutable MutexLock mutexTimestmap_;
+    boost::scoped_ptr<dbdky::port::EventLoopThreadPool> threadPool_;
+    uint64_t optimestamp_;
+
+    string getCdidOfFrame(const cma_frame_legacy& frm);
+    map<string,string> cdiddirec_;
 
 };
 }

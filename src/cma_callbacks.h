@@ -14,8 +14,8 @@ namespace cma_server
 {
 class cma_frame;
 class cma_frame_legacy;									//xinsy20140305
-typedef boost::function<map<string,string> (cma_frame_legacy&)> CmaUdpFrameParserFunc;	//xinsy20140305
-typedef boost::function<string (const cma_frame_legacy&)> CmaUdpSqlInsertStringMaker;	//xinsy20140305
+typedef boost::function<map<string,string> (cma_frame_legacy&)> CmaLegacyFrameParserFunc;	//xinsy20140305
+typedef boost::function<string (const cma_frame_legacy&)> CmaLegacySqlInsertStringMaker;	//xinsy20140305
 typedef boost::function<map<string,string> (cma_frame&)> CmaFrameParserFunc;
 typedef boost::function<string (const cma_frame&)> CmaSqlInsertStringMaker;
 
