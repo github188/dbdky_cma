@@ -1,6 +1,7 @@
 #include "cma_server_legacy.h"
 
 #include <utils/Logging.h>
+#include <port/InetAddress.h>
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
@@ -90,7 +91,7 @@ FrameParseErr checkCMAFrame(dbdky::port::Buffer* buf, int* frameLength)
 }
 
 
-dbdky::cma_server::cma_frame_legacy validBuf2Frame(uint8_t* buffer)
+dbdky::cma_server::cma_frame_legacy validBuf2Frame(uint8_t* buffer, dbdky::port::InetAddress& addr)
 {
     char deviceId[2];
 
@@ -257,7 +258,7 @@ dbdky::cma_server::cma_frame_legacy validBuf2Frame(uint8_t* buffer)
 
     uint8_t *pdudata = new uint8_t[length];
     memcpy(pdudata, &buffer[8], length);
-    dbdky::cma_server::cma_frame_legacy ret(ftype, ptype, deviceId, pdudata, length);
+    dbdky::cma_server::cma_frame_legacy ret(ftype, ptype, deviceId, pdudata, length, addr);
 
     delete [] pdudata;
 
@@ -348,7 +349,7 @@ cma_server_legacy::cma_server_legacy(dbdky::port::EventLoop* loop,
       name_(nameArg)
 {
     server_.setMessageCallback(
-        boost::bind(&cma_server_legacy::onMessage, this, _1, _2));
+        boost::bind(&cma_server_legacy::onMessage, this, _1, _2, _3));
 }
 
 void cma_server_legacy::start()
@@ -440,9 +441,11 @@ uint16_t cma_server_legacy::makeResponseFrame(bool ok,const cma_frame_legacy &fr
 #endif
 
 void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
+                        dbdky::port::InetAddress& addr,
                 		dbdky::Timestamp time)
 {
-    LOG_INFO << "**cma_server_legacy::onMessage ON TIME: " << time.toString();
+    LOG_INFO << "**cma_server_legacy::onMessage ON TIME: " << time.toString() 
+        << "PeerAddr: " << addr.toIp() << ":" << ::ntohs(addr.portNetEndian());
     int parselength;
     detail::FrameParseErr res;
     res = detail::checkCMAFrame(buf, &parselength);
@@ -453,7 +456,7 @@ void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
         {
             uint8_t* framebuffer = new uint8_t[parselength];
             memcpy(framebuffer, buf->peek(), parselength);
-            cma_frame_legacy frame = detail::validBuf2Frame(framebuffer);
+            cma_frame_legacy frame = detail::validBuf2Frame(framebuffer, addr);
             delete [] framebuffer;
             buf->retrieve(parselength);
             CmaLegacyFrameParserFunc func = cma_ptlrender_legacy::getInstance()->renderParser(frame);

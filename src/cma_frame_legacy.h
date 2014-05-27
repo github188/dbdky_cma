@@ -13,8 +13,10 @@
 #include <map>
 
 #include <utils/Logging.h>
+#include <port/InetAddress.h>
 
 #include "cma_callbacks.h"
+
 
 using namespace std;
 
@@ -63,7 +65,9 @@ public:
         CMA_UDP_PTYPE_UNKNOWN
     };
 
-    cma_frame_legacy(CMA_UDP_FRM_TYPE ftype, CMA_UDP_PROTOCOL_TYPE ptype, char deviceId[2], const uint8_t* pdudata, ssize_t pduLength);
+    cma_frame_legacy(CMA_UDP_FRM_TYPE ftype, CMA_UDP_PROTOCOL_TYPE ptype, 
+        char deviceId[2], const uint8_t* pdudata, ssize_t pduLength, 
+        dbdky::port::InetAddress& from);
 
     cma_frame_legacy(const cma_frame_legacy& frm);
     ~cma_frame_legacy();
@@ -138,6 +142,8 @@ private:
     CmaLegacyFrameParserFunc parserFunc_;
     map<string,string> monidata_;
     string cdid_;
+
+    dbdky::port::InetAddress fromAddr;
 };
 
 

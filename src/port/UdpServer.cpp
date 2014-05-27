@@ -5,6 +5,7 @@
 #include <boost/bind.hpp>
 
 #include <port/SocketsOps.h>
+#include <port/Buffer.h>
 
 #include <sys/socket.h>
 #include <unistd.h>
@@ -38,7 +39,7 @@ namespace dbdky
 {
 namespace port
 {
-void defaultUdpMessageCallback(dbdky::port::Buffer* buffer, dbdky::Timestamp receiveTime)
+void defaultUdpMessageCallback(dbdky::port::Buffer* buffer, dbdky::port::InetAddress& addr, dbdky::Timestamp receiveTime)
 {
     LOG_INFO << "";
 }
@@ -110,10 +111,15 @@ void UdpServer::listen()
         if (n > 0)
         {
             buff[n] = 0;
-            LOG_INFO << "Receive Data from: " << ::inet_ntoa(clientAddr.sin_addr) << "Port: " << ntohs(clientAddr.sin_port) << "Data: " << buff;
+            LOG_INFO << "Receive Data from: " << ::inet_ntoa(clientAddr.sin_addr) 
+                << "Port: " << ntohs(clientAddr.sin_port) << "Data: " << buff;
             if (messageCallback_)
             {
-                messageCallback_(NULL, Timestamp::now());
+                Buffer buf;
+                buf.append(buff, n);
+                dbdky::port::InetAddress peerAddr(::inet_ntoa(clientAddr.sin_addr), 
+                    ntohs(clientAddr.sin_port));
+                messageCallback_(&buf, peerAddr, Timestamp::now());
             }
         }
         else

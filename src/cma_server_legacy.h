@@ -32,6 +32,7 @@ public:
 private:
     uint16_t makeResponseFrame(bool ok,const cma_frame_legacy &frame,const uint8_t **serialData);	//xinsy20140327
     void onMessage(dbdky::port::Buffer* buf,
+        dbdky::port::InetAddress& addr,
         dbdky::Timestamp time);
 
     dbdky::port::EventLoop* loop_;

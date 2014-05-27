@@ -13,7 +13,8 @@ namespace port
     class InetAddress : public dbdky::copyable
     {
     public:
-        explicit InetAddress(uint16_t port);
+        InetAddress(uint16_t port);
+        InetAddress(const InetAddress& addr);
 
         InetAddress(const StringPiece& ip, uint16_t port);
  
@@ -21,6 +22,8 @@ namespace port
             : addr_(addr)
         {}
 
+        InetAddress& operator=(const InetAddress&);
+        
         string toIp() const;
         string toIpPort() const;
         string toHostPort() const __attribute__((deprecated))
@@ -47,6 +50,7 @@ namespace port
         {
             return addr_.sin_port;
         }
+
     private:
         struct sockaddr_in addr_;
     };

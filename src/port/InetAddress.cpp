@@ -32,6 +32,14 @@ InetAddress::InetAddress(const StringPiece& ip, uint16_t port)
     sockets::fromIpPort(ip.data(), port, &addr_);
 }
 
+InetAddress::InetAddress(const InetAddress& addr)
+{
+    bzero(&addr_, sizeof addr_);
+    addr_.sin_family = addr.addr_.sin_family;
+    addr_.sin_addr.s_addr = addr.addr_.sin_addr.s_addr;
+    addr_.sin_port = addr.addr_.sin_port;
+}
+
 string InetAddress::toIpPort() const
 {
     char buf[32];
@@ -44,4 +52,16 @@ string InetAddress::toIp() const
     char buf[32];
     sockets::toIp(buf, sizeof buf, addr_);
     return buf;
+}
+
+InetAddress& InetAddress::operator=(const InetAddress& addr)
+{
+    if (this == &addr) {
+        return *this;
+    }
+
+    bzero(&addr_, sizeof addr_);
+    addr_.sin_family = addr.addr_.sin_family;
+    addr_.sin_addr.s_addr = addr.addr_.sin_addr.s_addr;
+    addr_.sin_port = addr.addr_.sin_port;
 }

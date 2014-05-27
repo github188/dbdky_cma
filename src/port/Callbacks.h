@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <utils/Timestamp.h>
+#include <port/InetAddress.h>
 
 namespace dbdky
 {
@@ -38,6 +39,7 @@ namespace dbdky
 			Timestamp)> MessageCallback;
 
         typedef boost::function<void (Buffer*,
+            dbdky::port::InetAddress& addr,
 				Timestamp)> UdpMessageCallback;
         
         void defaultConnectionCallback(const TcpConnectionPtr& conn);
@@ -46,6 +48,7 @@ namespace dbdky
                         Timestamp receiveTime);
 
         void defaultUdpMessageCallback(Buffer* buffer,
+            dbdky::port::InetAddress& addr,
 			Timestamp receiveTime);
     }
 }
