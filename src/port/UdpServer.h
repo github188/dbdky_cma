@@ -56,6 +56,8 @@ public:
         messageCallback_ = cb;
     }
 
+    void sendMessageToClient(dbdky::port::Buffer&, dbdky::port::InetAddress&, int);
+
 private:
     EventLoop* loop_;
     const string hostport_;

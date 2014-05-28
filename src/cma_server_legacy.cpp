@@ -440,6 +440,23 @@ uint16_t cma_server_legacy::makeResponseFrame(bool ok,const cma_frame_legacy &fr
 }
 #endif
 
+void cma_server_legacy::sendResponse(dbdky::port::Buffer& buf, 
+    dbdky::port::InetAddress& addr,
+    int length)
+{
+    server_.sendMessageToClient(buf, addr, length);
+}
+
+void cma_server_legacy::sendResponse(const uint8_t* data, 
+    dbdky::port::InetAddress& addr, 
+    int length)
+{
+    dbdky::port::Buffer buffer;
+    buffer.append(data, length);
+
+    sendResponse(buffer, addr, length);
+}
+
 void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
                         dbdky::port::InetAddress& addr,
                 		dbdky::Timestamp time)
@@ -481,10 +498,9 @@ void cma_server_legacy::onMessage(dbdky::port::Buffer* buf,
             const uint8_t* data;
             uint16_t len = makeResponseFrame(true, frame, &data);
             LOG_INFO << "The response frame 's length is " << len;
-            string dataStr((const char*)data);
-            //TODO:
-            //Send the response.
+            //string dataStr((const char*)data);
 
+            sendResponse(data, addr, len);
 
             break;
         }

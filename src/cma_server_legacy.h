@@ -35,6 +35,9 @@ private:
         dbdky::port::InetAddress& addr,
         dbdky::Timestamp time);
 
+    void sendResponse(dbdky::port::Buffer& buf, dbdky::port::InetAddress& addr, int length);
+    void sendResponse(const uint8_t* data, dbdky::port::InetAddress& addr, int length);
+
     dbdky::port::EventLoop* loop_;
     dbdky::port::UdpServer server_;
 

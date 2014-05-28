@@ -96,6 +96,29 @@ void UdpServer::start()
     
 }
 
+void UdpServer::sendMessageToClient(dbdky::port::Buffer& buf,
+            dbdky::port::InetAddress& addr,
+            int length)
+{
+    LOG_INFO << "sendMessageToClient, addr" << addr.toIpPort() << "length:" << length;
+    if (!started_)
+    {
+        LOG_INFO << "Server Not Started Yet";
+        return;
+    }
+
+
+    uint8_t* tmpBuffer = new uint8_t[length];
+    memcpy(tmpBuffer, buf.peek(), length);
+
+    ssize_t datasent;
+
+    datasent = ::sendto(sockfd_, tmpBuffer, length, 0,
+        (struct sockaddr*)&(addr.getSockAddrInet()), length);
+
+    delete [] tmpBuffer;
+}  
+
 void UdpServer::listen()
 {
     char buff[4096];
