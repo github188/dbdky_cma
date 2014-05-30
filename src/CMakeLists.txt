@@ -2,6 +2,7 @@ add_subdirectory(utils)
 add_subdirectory(port)
 add_subdirectory(dbhelper)
 add_subdirectory(ws)
+add_subdirectory(syslog)
 
 set(confUtil_SRCS
     ConfigUtil.cpp
