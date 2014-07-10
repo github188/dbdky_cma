@@ -181,7 +181,6 @@ namespace cma_server
         sTmp += sTmp1;
         sTmp += "</sensors></request>";
       
-        LOG_INFO << sTmp; 
         //TODO:
         //upload it 
     }
